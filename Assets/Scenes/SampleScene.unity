@@ -1250,7 +1250,8 @@ MonoBehaviour:
   grasses:
   - {fileID: 1192697368483063603, guid: 3d90c40a3e481994a82f96c0c83a7313, type: 3}
   density: 150
-  offset: 0.3
+  yOffset: 0.2
+  xzOffset: 10
 --- !u!1 &1497086323
 GameObject:
   m_ObjectHideFlags: 0

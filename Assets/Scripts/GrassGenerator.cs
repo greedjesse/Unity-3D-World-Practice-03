@@ -1,9 +1,7 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Vector2 = System.Numerics.Vector2;
+using UnityEngine.Serialization;
 
 public class GrassGenerator : MonoBehaviour
 {
@@ -11,12 +9,12 @@ public class GrassGenerator : MonoBehaviour
     [SerializeField] private Terrain terrain;
     [SerializeField] private Mesh terrainMesh;
     [SerializeField] private Vector3 start;
-    [SerializeField] private Vector2 _size;
     
     [Header("Grass")]
     [SerializeField] private List<GameObject> grasses;
     [SerializeField] private int density;
-    [Tooltip("The height offset")] [SerializeField] private float offset;
+    [Tooltip("The height offset")] [SerializeField] private float yOffset;
+    [SerializeField] private int xzOffset;
     
     private Bounds _bounds;
     
@@ -36,14 +34,18 @@ public class GrassGenerator : MonoBehaviour
         {
             for (int z = 0; z < density; z++)
             {
-                float currX = start.x + xPerStep * x;
+                float currX = start.x + xPerStep * x + Random.Range(-xzOffset, xzOffset) / 10.0f;
                 float currY = startHeight;
-                float currZ = start.z + zPerStep * z;
+                float currZ = start.z + zPerStep * z + Random.Range(-xzOffset, xzOffset) / 10.0f;
                 
-                Physics.Raycast(new Vector3(currX, startHeight, currZ), new Vector3(0, -90, 0), out RaycastHit hit);
-                currY -= hit.distance - offset;
+                Physics.Raycast(new Vector3(currX, startHeight, currZ), new Vector3(0, -90, 0), out RaycastHit hit, Mathf.Infinity, ~ 1 << 3);
+                currY -= hit.distance - yOffset;
 
-                Instantiate(grasses[0], new Vector3(currX, currY, currZ), Quaternion.Euler(0, 0, 0));
+                if (currX > start.x && currX < start.x + _bounds.size.x && 
+                    currZ > start.z && currZ < start.z + _bounds.size.z)
+                {
+                    Instantiate(grasses[0], new Vector3(currX, currY, currZ), Quaternion.Euler(0, 0, 0));    
+                }
             }
         }
     }
